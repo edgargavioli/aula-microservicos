@@ -1,0 +1,166 @@
+services:
+  usuarios:
+    restart: always
+    container_name: app_usuarios
+    build:
+      context: ./usuario/
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://usuariosDb:5432/usuariosdb
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SERVER_PORT=8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      - usuariosDb
+      - kafka
+    networks:
+      - net_usuarios
+      - kafka-net
+    
+  usuariosDb:
+    image: postgres:latest
+    restart: always
+    container_name: usuariosdb
+    environment:
+      POSTGRES_DB: usuariosdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5431:5432"
+    networks:
+      - net_usuarios
+      - adminer-net
+
+  salas:
+    restart: always
+    container_name: app_salas
+    build:
+      context: ./sala/
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://salasDb:5432/salasdb
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SERVER_PORT=8082
+    ports:
+      - "8082:8082"
+    depends_on:
+      - salasDb
+      - kafka
+    networks:
+      - net_salas
+      - kafka-net
+  
+  salasDb:
+    image: postgres:latest
+    restart: always
+    container_name: salasdb
+    environment:
+      POSTGRES_DB: salasdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    networks:
+      - net_salas
+      - adminer-net
+
+  reservas:
+    restart: always
+    container_name: app_reservas
+    build:
+      context: ./reserva/
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://reservasDb:5432/reservasdb
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SERVER_PORT=8083
+    ports:
+      - "8083:8083"
+    depends_on:
+      - reservasDb
+      - kafka
+    networks:
+      - net_reservas
+      - kafka-net
+  
+  reservasDb:
+    image: postgres:latest
+    restart: always
+    container_name: reservasdb
+    environment:
+      POSTGRES_DB: reservasdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5433:5432"
+    networks:
+      - net_reservas
+      - adminer-net
+
+  adminer:
+    container_name: adminer
+    restart: always
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - adminer-net
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    restart: always
+    environment:
+      - ZOOKEEPER_CLIENT_PORT= 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - kafka-net
+  
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - kafka-net
+    
+
+networks:
+  adminer-net:
+    driver: bridge
+  kafka-net:
+    driver: bridge
+  net_usuarios:
+    driver: bridge
+  net_salas:
+    driver: bridge
+  net_reservas:
+    driver: bridge
