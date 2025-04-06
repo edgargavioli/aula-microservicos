@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuários, Salas e Reservas</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Usuários</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="usersTable">
+            <!-- Dados dos usuários serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <h1>Lista de Salas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Capacidade</th>
+            </tr>
+        </thead>
+        <tbody id="roomsTable">
+            <!-- Dados das salas serão inseridos aqui -->
+        </tbody>
+    </table>
+
+    <h1>Lista de Reservas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuário</th>
+                <th>Sala</th>
+                <th>Data</th>
+                <th>Hora</th>
+            </tr>
+        </thead>
+        <tbody id="reservationsTable">
+        </tbody>
+    </table>
+
+    <script src="../static/js/table.js">
+    </script>
+</body>
+</html>
